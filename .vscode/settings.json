@@ -1,0 +1,16 @@
+{
+    "GitCommitPlugin.CustomCommitType": [
+        {
+            "key": "geometry",
+            "label": "geo",
+            "detail": "change to 3d geometry",
+            "icon": "📏"
+        },
+        {
+            "key": "misc",
+            "label": "misc",
+            "detail": "misc items",
+            "icon": "⚙️"
+        }
+    ]
+}
