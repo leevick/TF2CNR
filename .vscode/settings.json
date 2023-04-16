@@ -12,5 +12,9 @@
             "detail": "misc items",
             "icon": "⚙️"
         }
+    ],
+    "python.formatting.autopep8Args": [
+        "--ignore",
+        "E402"
     ]
 }

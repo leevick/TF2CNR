@@ -90,3 +90,49 @@ def bevelWeight(obj: bpy.types.Object, width: float, segs: int = 6) -> bpy.types
     bv.segments = segs
     bpy.ops.object.modifier_apply(modifier="bevel")
     return obj
+
+
+def createPolyLine(coords, name: str) -> bpy.types.Object:
+    curveData = bpy.data.curves.new(name, type='CURVE')
+    curveData.dimensions = '2D'
+    curveData.fill_mode = 'BOTH'
+    polyline = curveData.splines.new('POLY')
+    polyline.points.add(len(coords) - 1)
+
+    for i, coord in enumerate(coords):
+        x, y, z = coord
+        polyline.points[i].co = (x, y, z, 1)
+
+    # create Object
+    # curveOB = bpy.data.objects.new('myCurve', curveData)
+
+    # attach to scene and validate context
+    view_layer = bpy.context.view_layer
+    curveOB = bpy.data.objects.new(name, curveData)
+    view_layer.active_layer_collection.collection.objects.link(curveOB)
+    curveOB.select_set(True)
+    bpy.context.view_layer.objects.active = curveOB
+
+    return curveOB
+
+
+def createPolygon(verts):
+    bpy.ops.object.select_all(action="DESELECT")
+    bm = bmesh.new()
+    for v in verts:
+        bm.verts.new((v[0], v[1], v[2]))
+    bm.faces.new(bm.verts)
+
+    bm.normal_update()
+
+    me = bpy.data.meshes.new("")
+    bm.to_mesh(me)
+
+    ob = bpy.data.objects.new("", me)
+
+    view_layer = bpy.context.view_layer
+    view_layer.active_layer_collection.collection.objects.link(ob)
+
+    ob.select_set(True)
+
+    return ob
