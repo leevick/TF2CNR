@@ -10,7 +10,7 @@ dir = pathlib.Path(__file__).parent.as_posix()
 if not dir in sys.path:
     sys.path.append(dir)
 
-from utils import add_cube, moveOrigin, extrudeFace, createPolygon, createPolyLine
+from utils import add_cube, moveOrigin, extrudeFace, createPolygon, createPolyLine, union
 
 
 bpy.data.meshes.remove(bpy.data.meshes[0])
@@ -30,36 +30,32 @@ rightPole = add_cube((0.120, 0.150, 2.750), (-0.910, 0, 2.750 / 2))
 
 verts = ((-0.9, 0, 0),
          (0.9, 0, 0),
-         (0.9, 0, 0.86),
-         (0, 0, 0.96),
-         (-0.9, 0, 0.86))
+         (0.9, 0, 0.775),
+         (0, 0, 0.875),
+         (-0.9, 0, 0.775))
 
 board = createPolygon(verts)
-board.location = (0, -0.025, 2)
+board.location = (0, -0.025, 2.085)
 extrudeFace(board, 0.05)
 
 
 # Frames
 
-verts = ((0, 0, 0),
-         (0, 0.03, 0),
-         (0, 0.03, 0.07),
-         (0, 0, 0.085))
+verts = [
+    (0, 0.055, 0),
+    (0, 0.055, 0.07),
+    (0, 0.025, 0.085),
+    (0, -0.025, 0.085),
+    (0, -0.055, 0.07),
+    (0, -0.055, 0)]
+
 
 frontFrame = createPolygon(verts)
 extrudeFace(frontFrame, 1.7)
-frontFrame.location = (0.85, 0.025, 2.0)
-
-verts = ((0, 0, 0),
-         (0, -0.03, 0),
-         (0, -0.03, 0.07),
-         (0, 0, 0.085))
-
-backFrame = createPolygon(verts)
-extrudeFace(backFrame, 1.7)
-backFrame.location = (-0.85, -0.025, 2.0)
+frontFrame.location = (0.85, 0, 2.0)
 
 
+union(board, frontFrame)
 # Board
 
 for obj in bpy.data.objects:
@@ -98,6 +94,9 @@ bpy.ops.mesh.fill()
 
 bpy.ops.object.editmode_toggle()
 
+topFrame = bpy.context.active_object
+
+union(topFrame, board)
 
 bpy.ops.wm.save_mainfile(
     filepath=f"{os.getcwd()}/{argv[0]}.blend")
